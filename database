@@ -1,1 +1,66 @@
+CREATE DATABASE tastego;
+USE tastego;
 
+CREATE TABLE users(
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(15),
+    password VARCHAR(255) NOT NULL,
+    address TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE otp_verification(
+    otp_id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(100),
+    otp VARCHAR(5),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    verified BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE restaurants(
+    restaurant_id INT PRIMARY KEY AUTO_INCREMENT,
+    restaurant_name VARCHAR(100),
+    image VARCHAR(255),
+    rating DECIMAL(2,1),
+    address TEXT,
+    delivery_time INT
+);
+
+CREATE TABLE categories(
+    category_id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(50)
+);
+
+CREATE TABLE menu_items(
+    item_id INT PRIMARY KEY AUTO_INCREMENT,
+    restaurant_id INT,
+    category_id INT,
+    item_name VARCHAR(100),
+    description TEXT,
+    price DECIMAL(10,2),
+    image VARCHAR(255),
+    available BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (restaurant_id) REFERENCES restaurants(restaurant_id),
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);
+
+CREATE TABLE orders(
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT,
+    total_amount DECIMAL(10,2),
+    status VARCHAR(30),
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE order_items(
+    order_item_id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT,
+    item_id INT,
+    quantity INT,
+    price DECIMAL(10,2),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (item_id) REFERENCES menu_items(item_id)
+);
